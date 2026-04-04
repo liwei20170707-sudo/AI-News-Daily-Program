@@ -14,7 +14,7 @@
   "push": {
     "serverchan_key": "SCT325378T2knp9EXAJ2lNuqecF1nix7AE",
     "pushplus_token": "b001a6b489f54757976e09570af0e488",
-    "emails": ["liwei0@huawei.com", "liwei20170707@gmail.com"]
+    "emails": ["liwei0@huawei.com"]
   },
   "dashscope": {
     "api_key": "${DASHSCOPE_API_KEY}",
