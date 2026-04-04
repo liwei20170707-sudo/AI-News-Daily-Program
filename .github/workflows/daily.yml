@@ -1,11 +1,11 @@
 name: AI News Daily Push
 
 on:
-  # 定时触发：北京时间07:30 = UTC 23:30（前一天）
+  # 定时触发：北京时间07:30 = UTC 23:30
   schedule:
     - cron: '30 23 * * *'
   
-  # 手动触发（用于测试）
+  # 手动触发
   workflow_dispatch:
     inputs:
       test_mode:
@@ -20,10 +20,8 @@ on:
         type: boolean
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     
     steps:
       - name: Checkout repository
@@ -41,24 +39,59 @@ jobs:
       
       - name: Install Python dependencies
         run: |
-          pip install feedparser requests openai edge-tts pydub audioop-lts
+          pip install feedparser requests openai edge-tts pydub
       
       - name: Run AI News Push
-        run: |
-          if [ "${{ inputs.test_mode }}" = "true" ]; then
-            python main.py --test
-          else
-            python main.py
-          fi
+        run: python main.py
         env:
           DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
       
       - name: Generate Podcast
-        if: ${{ inputs.generate_podcast != 'false' }}
+        if: github.event.inputs.generate_podcast != 'false'
         run: |
-          python main.py --podcast --no-summary
+          python podcast_generator.py
         env:
           DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
+      
+      - name: Setup GitHub Pages
+        if: github.event.inputs.generate_podcast != 'false'
+        run: |
+          mkdir -p public
+          cp podcasts/*.mp3 public/ 2>/dev/null || true
+          
+          # 生成 podcast.xml
+          cat > public/podcast.xml << 'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+          <channel>
+              <title>AI科技早报</title>
+              <link>https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}</link>
+              <language>zh-CN</language>
+              <description>每日AI科技热点，双人对话播报</description>
+              <itunes:category text="Technology"/>
+              <item>
+                  <title>AI科技早报 - $(date '+%Y-%m-%d')</title>
+                  <description>今日科技新闻播客版</description>
+                  <pubDate>$(date -R)</pubDate>
+                  <enclosure url="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/podcast.mp3" type="audio/mpeg"/>
+              </item>
+          </channel>
+          </rss>
+          EOF
+          
+          # 重命名MP3为固定名称
+          for f in public/*.mp3; do
+            mv "$f" public/podcast.mp3 2>/dev/null || true
+          done
+      
+      - name: Deploy to GitHub Pages
+        if: github.event.inputs.generate_podcast != 'false'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          publish_branch: gh-pages
+          keep_files: true
       
       - name: Upload report artifact
         if: success()
@@ -67,89 +100,3 @@ jobs:
           name: daily-report
           path: reports/
           retention-days: 7
-      
-      - name: Upload podcast artifact
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: podcast
-          path: podcasts/*.mp3
-          retention-days: 30
-
-  # 部署到GitHub Pages
-  deploy-pages:
-    needs: build
-    runs-on: ubuntu-latest
-    if: ${{ inputs.generate_podcast != 'false' }}
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          ref: gh-pages
-      
-      - name: Download podcast artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: podcast
-          path: podcasts/
-      
-      - name: Generate podcast RSS
-        run: |
-          python -c "
-          import os
-          from datetime import datetime
-          from pathlib import Path
-
-          podcasts_dir = Path('podcasts')
-          mp3_files = list(podcasts_dir.glob('*.mp3'))
-          
-          if not mp3_files:
-              print('No podcast files found')
-              exit(0)
-          
-          # 获取最新的MP3文件
-          latest_mp3 = max(mp3_files, key=lambda f: f.stat().st_mtime)
-          file_size = latest_mp3.stat().st_size
-          
-          # 生成RSS
-          today = datetime.now().strftime('%Y年%m月%d日')
-          base_url = 'https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}'
-          
-          rss_content = f'''<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-          <rss version=\"2.0\" xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\">
-          <channel>
-              <title>AI科技早报</title>
-              <link>{base_url}</link>
-              <language>zh-CN</language>
-              <author>AI新闻编辑部</author>
-              <description>每日AI科技热点，双人对话播报</description>
-              <itunes:author>AI新闻编辑部</itunes:author>
-              <itunes:summary>每日AI科技热点，双人对话播报</itunes:summary>
-              <itunes:category text=\"Technology\"/>
-              <itunes:explicit>false</itunes:explicit>
-              
-              <item>
-                  <title>AI科技早报 - {today}</title>
-                  <description>每日AI科技新闻精选，双人对话播报</description>
-                  <pubDate>{datetime.now().strftime('%a, %d %b %Y %H:%M:%S +0800')}</pubDate>
-                  <enclosure url=\"{base_url}/{latest_mp3.name}\" length=\"{file_size}\" type=\"audio/mpeg\"/>
-                  <itunes:duration>5:00</itunes:duration>
-              </item>
-          </channel>
-          </rss>'''
-          
-          with open('podcast.xml', 'w', encoding='utf-8') as f:
-              f.write(rss_content)
-          
-          print(f'Generated RSS for: {latest_mp3.name}')
-          "
-      
-      - name: Commit and push to gh-pages
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add .
-          git diff --quiet && git diff --staged --quiet || git commit -m "Update podcast - $(date '+%Y-%m-%d')"
-          git push origin gh-pages
-        continue-on-error: true
