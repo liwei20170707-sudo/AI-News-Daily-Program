@@ -1,13 +1,14 @@
 """
-AI科技新闻自动摘要推送系统 - 阶段一
-功能：RSS抓取 + 阿里云百炼摘要 + 多渠道推送（微信+邮箱）
+AI科技新闻自动摘要推送系统 - 阶段一 + 阶段二
+功能：RSS抓取 + 阿里云百炼摘要 + 多渠道推送（微信+邮箱）+ 双人对话播客
 
 使用方式：
-  python main.py [--test] [--no-summary]
+  python main.py [--test] [--no-summary] [--podcast]
   
 参数：
   --test      测试模式，只抓取不推送
   --no-summary 不生成AI摘要，直接推送原始标题
+  --podcast   生成播客音频（阶段二功能）
 """
 
 import os
@@ -432,6 +433,31 @@ def main():
     
     # 4. WorkBuddy推送
     push_workbuddy(config, title, markdown_report)
+    
+    # ========== 阶段二：播客生成 ==========
+    podcast_mode = '--podcast' in sys.argv
+    
+    if podcast_mode and config['dashscope']['api_key']:
+        print("\n" + "=" * 50)
+        print("🎙️ 阶段二：生成播客音频")
+        print("=" * 50)
+        
+        try:
+            import asyncio
+            from podcast_generator import generate_podcast
+            
+            client = create_summary_client(config)
+            result = asyncio.run(generate_podcast(client, news_list, date_str))
+            
+            if result:
+                print(f"\n✅ 播客生成成功！")
+                print(f"   时长: {result['duration'] // 60}分{result['duration'] % 60}秒")
+                print(f"   文件: {result['audio_file']}")
+        except ImportError as e:
+            print(f"⚠️ 播客模块未安装: {e}")
+            print("   请运行: pip install edge-tts pydub")
+        except Exception as e:
+            print(f"❌ 播客生成失败: {e}")
     
     print("\n" + "=" * 50)
     print("✅ 任务完成！")
