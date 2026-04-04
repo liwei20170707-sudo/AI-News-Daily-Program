@@ -143,7 +143,7 @@ jobs:
                   <title>AI科技早报 - {today}</title>
                   <description>每日AI科技新闻精选，双人对话播报</description>
                   <pubDate>{datetime.now().strftime('%a, %d %b %Y %H:%M:%S +0800')}</pubDate>
-                  <enclosure url=\"{base_url}/{latest_mp3.name}\" length=\"{file_size}\" type=\"audio/mpeg\"/>
+                  <enclosure url=\"{base_url}/podcasts/{latest_mp3.name}\" length=\"{file_size}\" type=\"audio/mpeg\"/>
                   <itunes:duration>5:00</itunes:duration>
               </item>
           </channel>
