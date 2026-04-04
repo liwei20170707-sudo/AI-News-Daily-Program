@@ -5,7 +5,7 @@ on:
   schedule:
     - cron: '30 23 * * *'
   
-  # 手动触发
+  # 手动触发（用于测试）
   workflow_dispatch:
     inputs:
       test_mode:
@@ -18,81 +18,105 @@ on:
         required: false
         default: 'true'
         type: boolean
+      generate_video:
+        description: '生成短视频（阶段三）'
+        required: false
+        default: 'false'
+        type: boolean
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     
     steps:
+      # 1. 检出代码
       - name: Checkout repository
         uses: actions/checkout@v4
       
+      # 2. 设置Python
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
       
+      # 3. 安装系统依赖（FFmpeg用于音频处理）
       - name: Install system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg
       
+      # 4. 安装Python依赖
       - name: Install Python dependencies
         run: |
+          pip install --upgrade pip
           pip install feedparser requests openai edge-tts pydub
       
+      # 5. 运行新闻抓取和推送（阶段一）
       - name: Run AI News Push
         run: python main.py
         env:
           DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
       
+      # 6. 生成播客音频（阶段二）
       - name: Generate Podcast
-        if: github.event.inputs.generate_podcast != 'false'
+        if: github.event.inputs.generate_podcast == 'true'
         run: |
-          python podcast_generator.py
+          python podcast_generator.py --from-reports
         env:
           DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
       
+      # 7. 准备GitHub Pages部署目录
       - name: Setup GitHub Pages
-        if: github.event.inputs.generate_podcast != 'false'
+        if: github.event.inputs.generate_podcast == 'true'
         run: |
           mkdir -p public
-          cp podcasts/*.mp3 public/ 2>/dev/null || true
+          # 复制播客文件
+          if [ -f podcasts/*.mp3 ]; then
+            cp podcasts/*.mp3 public/podcast.mp3 2>/dev/null || true
+          fi
           
-          # 生成 podcast.xml
-          cat > public/podcast.xml << 'EOF'
+          # 生成RSS文件
+          BASE_URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
+          TODAY=$(date '+%Y年%m月%d日')
+          PUB_DATE=$(date -R)
+          
+          cat > public/podcast.xml << EOF
           <?xml version="1.0" encoding="UTF-8"?>
           <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
           <channel>
               <title>AI科技早报</title>
-              <link>https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}</link>
+              <link>${BASE_URL}</link>
               <language>zh-CN</language>
               <description>每日AI科技热点，双人对话播报</description>
+              <itunes:author>AI新闻编辑部</itunes:author>
               <itunes:category text="Technology"/>
+              <itunes:explicit>false</itunes:explicit>
               <item>
-                  <title>AI科技早报 - $(date '+%Y-%m-%d')</title>
-                  <description>今日科技新闻播客版</description>
-                  <pubDate>$(date -R)</pubDate>
-                  <enclosure url="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/podcast.mp3" type="audio/mpeg"/>
+                  <title>AI科技早报 - ${TODAY}</title>
+                  <description>今日科技新闻精选，双人对话播报</description>
+                  <pubDate>${PUB_DATE}</pubDate>
+                  <enclosure url="${BASE_URL}/podcast.mp3" type="audio/mpeg"/>
               </item>
           </channel>
           </rss>
           EOF
           
-          # 重命名MP3为固定名称
-          for f in public/*.mp3; do
-            mv "$f" public/podcast.mp3 2>/dev/null || true
-          done
+          echo "✅ GitHub Pages 目录准备完成"
+          ls -la public/
       
+      # 8. 部署到GitHub Pages
       - name: Deploy to GitHub Pages
-        if: github.event.inputs.generate_podcast != 'false'
+        if: github.event.inputs.generate_podcast == 'true'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
           publish_branch: gh-pages
           keep_files: true
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
       
+      # 9. 上传报告作为Artifact（可选，用于调试）
       - name: Upload report artifact
         if: success()
         uses: actions/upload-artifact@v4
@@ -100,3 +124,12 @@ jobs:
           name: daily-report
           path: reports/
           retention-days: 7
+      
+      # 10. 上传播客Artifact（可选）
+      - name: Upload podcast artifact
+        if: success() && github.event.inputs.generate_podcast == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: podcast
+          path: podcasts/*.mp3
+          retention-days: 30
