@@ -7,7 +7,7 @@ AI科技新闻播客生成器 - 阶段二
   
 系统要求：
   - FFmpeg（用于音频处理）
-  - GitHub Actions 自带 ffmpeg，无需额外安装
+  - Windows: 下载 https://ffmpeg.org/download.html 并添加到PATH
 """
 
 import os
@@ -15,7 +15,6 @@ import sys
 import re
 import json
 import asyncio
-import argparse
 from datetime import datetime
 from pathlib import Path
 
@@ -44,23 +43,22 @@ PODCAST_DIR = Path(__file__).parent / "podcasts"
 PODCAST_DIR.mkdir(exist_ok=True)
 
 # 音色配置
-VOICE_HOST_A = "zh-CN-YunxiNeural"      # 男声：云希（幽默风趣）
-VOICE_HOST_B = "zh-CN-XiaoxiaoNeural"   # 女声：晓晓（技术严谨）
+VOICE_HOST_A = "zh-CN-YunxiNeural"    # 男声：云希（幽默风趣）
+VOICE_HOST_B = "zh-CN-XiaoxiaoNeural"  # 女声：晓晓（技术严谨）
 
 # 播客元信息
 PODCAST_TITLE = "AI科技早报"
 PODCAST_AUTHOR = "AI新闻编辑部"
 PODCAST_DESCRIPTION = "每日AI科技热点，双人对话播报，让科技资讯听得懂"
 
-
 # ========== 对话脚本生成 ==========
 def generate_dialogue_script(client, news_list, model="qwen-turbo"):
     """将新闻列表改写成双人对话脚本"""
     
-    # 准备新闻摘要（限制8条，控制播客时长）
+    # 准备新闻摘要
     news_text = "\n".join([
-        f"• {item.get('title', '未知标题')}：{item.get('summary', item.get('desc', ''))[:100]}"
-        for item in news_list[:8]
+        f"• {item['title']}：{item.get('summary', item.get('desc', '')[:100])}"
+        for item in news_list[:8]  # 限制8条新闻
     ])
     
     prompt = f"""你是一位播客脚本编剧。请将以下AI科技新闻改写成一段双人对话脚本。
@@ -72,8 +70,8 @@ def generate_dialogue_script(client, news_list, model="qwen-turbo"):
 要求：
 1. 对话自然流畅，像两个朋友聊天
 2. 每条新闻用2-3轮对话讲清楚核心价值
-3. 适当加入过渡语和互动（如"说到这个...""没错！""哈哈"等）
-4. 总字数控制在800-1200字，约3-5分钟时长
+3. 适当加入过渡语和互动
+4. 总字数控制在800-1000字
 5. 每句话前用"A："或"B："标明说话人
 6. 直接输出对话内容，不要其他说明
 
@@ -97,14 +95,13 @@ def generate_dialogue_script(client, news_list, model="qwen-turbo"):
 
 def parse_dialogue_script(script_text):
     """解析对话脚本，返回[(说话人, 台词)]列表"""
-    # 匹配 A：xxx 或 B：xxx 格式
     pattern = r'([AB])[：:]\s*([^AB]+?)(?=[AB][：:]|$)'
     matches = re.findall(pattern, script_text, re.DOTALL)
     
     dialogues = []
     for speaker, sentence in matches:
         sentence = sentence.strip()
-        if sentence and len(sentence) > 1:
+        if sentence:
             dialogues.append((speaker, sentence))
     
     return dialogues
@@ -130,7 +127,7 @@ async def generate_dialogue_audio(dialogues, output_dir):
         voice = VOICE_HOST_A if speaker == 'A' else VOICE_HOST_B
         temp_file = output_dir / f"segment_{i:03d}_{speaker}.mp3"
         
-        print(f"  🎙️ 生成音频 [{i+1}/{len(dialogues)}]: {speaker} - {sentence[:35]}...")
+        print(f"  🎙️ 生成音频 [{i+1}/{len(dialogues)}]: {speaker} - {sentence[:30]}...")
         
         success = await text_to_speech(sentence, voice, temp_file)
         if success:
@@ -145,49 +142,37 @@ def merge_audio_files(audio_files, output_file, pause_ms=500):
     """合并音频文件，添加停顿"""
     print(f"\n🎵 合并音频片段...")
     
-    if not audio_files:
-        print("❌ 没有音频文件可合并")
-        return None
-    
     final_audio = AudioSegment.silent(duration=500)  # 开头静音
     
-    for i, audio_file in enumerate(audio_files):
+    for audio_file in audio_files:
         try:
             segment = AudioSegment.from_mp3(str(audio_file))
             final_audio += segment
             final_audio += AudioSegment.silent(duration=pause_ms)  # 句间停顿
-            print(f"  ✅ 已合并: {audio_file.name}")
         except Exception as e:
-            print(f"  ⚠️ 无法加载音频 {audio_file.name}: {e}")
+            print(f"  ⚠️ 无法加载音频 {audio_file}: {e}")
     
     final_audio += AudioSegment.silent(duration=1000)  # 结尾静音
     
     # 导出
     final_audio.export(str(output_file), format="mp3", bitrate="128k")
-    print(f"\n  ✅ 播客音频已保存: {output_file}")
-    print(f"  📊 总时长: {len(final_audio) // 1000} 秒")
+    print(f"  ✅ 播客音频已保存: {output_file}")
     
     return output_file
 
 
 # ========== 播客RSS生成 ==========
-def generate_podcast_rss(audio_file, date_str, rss_file, base_url):
+def generate_podcast_rss(episode_file, episode_title, episode_description, 
+                         pub_date, rss_file, base_url):
     """生成播客RSS XML文件"""
     
-    file_size = audio_file.stat().st_size
+    file_size = os.path.getsize(episode_file)
+    duration_ms = len(AudioSegment.from_mp3(str(episode_file)))
+    duration_min = duration_ms // 60000
+    duration_sec = (duration_ms % 60000) // 1000
+    duration_str = f"{duration_min}:{duration_sec:02d}"
     
-    try:
-        audio_seg = AudioSegment.from_mp3(str(audio_file))
-        duration_sec = len(audio_seg) // 1000
-        duration_min = duration_sec // 60
-        duration_sec_rem = duration_sec % 60
-        duration_str = f"{duration_min}:{duration_sec_rem:02d}"
-    except:
-        duration_str = "5:00"
-    
-    pub_date = datetime.now().strftime('%a, %d %b %Y %H:%M:%S +0800')
-    
-    rss_content = f'''<?xml version="1.0" encoding="UTF-8"?>
+    rss_content = f"""<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:content="http://purl.org/rss/1.0/modules/content/">
 <channel>
     <title>{PODCAST_TITLE}</title>
@@ -201,15 +186,15 @@ def generate_podcast_rss(audio_file, date_str, rss_file, base_url):
     <itunes:explicit>false</itunes:explicit>
     
     <item>
-        <title>{PODCAST_TITLE} - {date_str}</title>
-        <description>今日AI科技新闻精选，双人对话播报</description>
+        <title>{episode_title}</title>
+        <description>{episode_description}</description>
         <pubDate>{pub_date}</pubDate>
-        <enclosure url="{base_url}/{audio_file.name}" length="{file_size}" type="audio/mpeg"/>
+        <enclosure url="{base_url}/{episode_file.name}" length="{file_size}" type="audio/mpeg"/>
         <itunes:duration>{duration_str}</itunes:duration>
-        <itunes:summary>今日AI科技新闻精选，双人对话播报</itunes:summary>
+        <itunes:summary>{episode_description}</itunes:summary>
     </item>
 </channel>
-</rss>'''
+</rss>"""
     
     with open(rss_file, 'w', encoding='utf-8') as f:
         f.write(rss_content)
@@ -228,8 +213,6 @@ async def generate_podcast(client, news_list, date_str=None):
     print("=" * 50)
     print("🎙️ AI科技新闻播客生成器")
     print("=" * 50)
-    print(f"📅 日期: {date_str}")
-    print(f"📰 新闻数量: {len(news_list)} 条")
     
     # 1. 生成对话脚本
     print("\n📝 正在生成对话脚本...")
@@ -240,10 +223,7 @@ async def generate_podcast(client, news_list, date_str=None):
         return None
     
     print("✅ 对话脚本生成成功")
-    
-    # 显示脚本预览
-    preview = script[:400].replace('\n', ' ')
-    print(f"\n--- 脚本预览 ---\n{preview}...\n")
+    print(f"\n--- 脚本预览 ---\n{script[:500]}...\n")
     
     # 2. 解析对话
     dialogues = parse_dialogue_script(script)
@@ -251,10 +231,6 @@ async def generate_podcast(client, news_list, date_str=None):
     
     if not dialogues:
         print("❌ 未解析到有效对话，退出")
-        # 保存脚本供调试
-        debug_file = PODCAST_DIR / f"debug_script_{datetime.now().strftime('%Y%m%d')}.txt"
-        debug_file.write_text(script, encoding='utf-8')
-        print(f"💡 脚本已保存到: {debug_file}")
         return None
     
     # 3. 创建临时目录
@@ -292,96 +268,34 @@ async def generate_podcast(client, news_list, date_str=None):
         "audio_file": output_file,
         "script_file": script_file,
         "script": script,
+        "duration": len(AudioSegment.from_mp3(str(output_file))) // 1000
     }
 
 
-# ========== 加载新闻数据 ==========
-def load_news_from_reports():
-    """从reports目录加载新闻数据"""
-    reports_dir = Path(__file__).parent / "reports"
-    if not reports_dir.exists():
-        print("❌ reports目录不存在")
-        return None
-    
-    # 查找最新的JSON报告
-    json_files = list(reports_dir.glob("*.json"))
-    if not json_files:
-        print("❌ 未找到JSON报告文件")
-        return None
-    
-    latest_report = max(json_files, key=lambda f: f.stat().st_mtime)
-    print(f"📄 使用报告: {latest_report.name}")
-    
-    try:
-        with open(latest_report, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            news_list = data.get('news', [])
-            print(f"📰 加载了 {len(news_list)} 条新闻")
-            return news_list
-    except Exception as e:
-        print(f"❌ 读取报告失败: {e}")
-        return None
-
-
-def get_test_news():
-    """获取测试新闻数据"""
-    return [
-        {"title": "阿里发布Qwen3.6-Plus大模型", "summary": "1.4万亿参数，成为全球最大AI聚合平台，性能超越GPT-4"},
-        {"title": "特斯拉全球超级充电桩突破8万根", "summary": "中国内地已有超1.2万根，充电网络持续扩张"},
-        {"title": "英特尔Nova Lake-S处理器规格曝光", "summary": "44核配288MB缓存，性能提升显著"},
-        {"title": "OpenAI考虑收购AI芯片公司", "summary": "加强自研芯片能力，减少对英伟达依赖"},
-        {"title": "谷歌DeepMind发布新一代AlphaFold", "summary": "蛋白质预测准确率再创新高"},
-        {"title": "中国空间站将开展AI科学实验", "summary": "利用大模型辅助太空数据分析"},
-    ]
-
-
-# ========== 命令行入口 ==========
+# ========== 测试入口 ==========
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='AI科技新闻播客生成器')
-    parser.add_argument('--from-reports', action='store_true', 
-                       help='从reports目录读取新闻数据')
-    parser.add_argument('--test', action='store_true', 
-                       help='使用测试数据运行')
+    # 测试用的模拟新闻
+    test_news = [
+        {"title": "OpenAI发布GPT-5", "summary": "OpenAI发布新一代大模型GPT-5，性能提升显著"},
+        {"title": "苹果推出AI手机", "summary": "苹果发布搭载AI芯片的新款iPhone，支持本地大模型"},
+        {"title": "特斯拉机器人量产", "summary": "特斯拉Optimus机器人开始量产，售价2万美元"},
+    ]
     
-    args = parser.parse_args()
-    
-    # 获取API Key
+    # 需要配置API Key
     api_key = os.environ.get("DASHSCOPE_API_KEY")
-    
-    # 如果环境变量没有，尝试从本地文件读取（仅本地测试）
     if not api_key:
         local_key_file = Path(__file__).parent / "dashscope_key.txt"
         if local_key_file.exists():
             api_key = local_key_file.read_text(encoding='utf-8').strip()
-            print("📁 从本地文件读取API Key")
     
     if not api_key:
         print("❌ 请配置DASHSCOPE_API_KEY环境变量")
-        print("   GitHub: Settings -> Secrets -> DASHSCOPE_API_KEY")
-        print("   本地: set DASHSCOPE_API_KEY=你的密钥")
         sys.exit(1)
     
-    # 初始化OpenAI客户端（阿里云兼容模式）
     client = OpenAI(
         api_key=api_key,
         base_url="https://dashscope.aliyuncs.com/compatible-mode/v1"
     )
     
-    news_list = None
-    
-    if args.test:
-        print("🧪 测试模式，使用模拟数据")
-        news_list = get_test_news()
-    elif args.from_reports:
-        print("📂 从reports目录加载新闻")
-        news_list = load_news_from_reports()
-        if not news_list:
-            print("⚠️ 无法从报告加载，使用测试数据")
-            news_list = get_test_news()
-    else:
-        # 默认使用测试数据
-        print("📋 默认模式，使用测试数据（如需从报告加载请加 --from-reports）")
-        news_list = get_test_news()
-    
-    # 运行播客生成
-    asyncio.run(generate_podcast(client, news_list))
+    # 运行
+    asyncio.run(generate_podcast(client, test_news))
