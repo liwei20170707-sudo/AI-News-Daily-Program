@@ -19,14 +19,5 @@
         <itunes:duration>2:34</itunes:duration>
         <itunes:summary>今日热点：AI削弱学生批判性思维、微软Copilot内存飙升、AWS中东数据中心遭袭击、中国汽车获国际认可、英伟达神经纹理压缩技术、三星利润暴涨、Lucid销量大跌、苹果AirPods Pro升级前瞻</itunes:summary>
     </item>
-    
-    <item>
-        <title>AI科技早报 - 2026年04月04日</title>
-        <description>今日热点：OpenAI发布GPT-5、苹果推出AI手机、特斯拉机器人量产等AI科技新闻</description>
-        <pubDate>Fri, 04 Apr 2026 07:30:00 +0800</pubDate>
-        <enclosure url="https://liwei20170707-sudo.github.io/AI-News-Daily-Program/podcasts/AI科技早报_20260404.mp3" length="895420" type="audio/mpeg"/>
-        <itunes:duration>2:36</itunes:duration>
-        <itunes:summary>今日热点：OpenAI发布GPT-5、苹果推出AI手机、特斯拉机器人量产等AI科技新闻</itunes:summary>
-    </item>
 </channel>
 </rss>
