@@ -1,0 +1,28 @@
+{
+  "feeds": [
+    {"name": "机器之心", "url": "https://www.jiqizhixin.com/rss", "max_items": 6},
+    {"name": "IT之家", "url": "https://www.ithome.com/rss", "max_items": 8},
+    {"name": "Hacker News", "url": "https://hnrss.org/frontpage", "max_items": 6},
+    {"name": "36氪", "url": "https://36kr.com/feed", "max_items": 5}
+  ],
+  "feeds_backup": [
+    {"name": "新智元", "url": "https://rsshub.app/xinzhiyuan", "max_items": 5},
+    {"name": "量子位", "url": "https://rsshub.app/qbitai", "max_items": 5},
+    {"name": "GitHub Trending", "url": "https://rsshub.app/github/trending/daily", "max_items": 5},
+    {"name": "VentureBeat", "url": "https://rsshub.app/venturebeat", "max_items": 5}
+  ],
+  "push": {
+    "serverchan_key": "SCT325378T2knp9EXAJ2lNuqecF1nix7AE",
+    "dingtalk_webhook": "https://oapi.dingtalk.com/robot/send?access_token=477dbcd07a4a70e2e2b75bfea6d264b32a6b0c294f2176538899553605b5954f",
+    "emails": ["liwei0@huawei.com"]
+  },
+  "dashscope": {
+    "api_key": "${DASHSCOPE_API_KEY}",
+    "model": "qwen-turbo",
+    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+  },
+  "schedule": {
+    "fetch_time": "04:00",
+    "push_time": "07:30"
+  }
+}

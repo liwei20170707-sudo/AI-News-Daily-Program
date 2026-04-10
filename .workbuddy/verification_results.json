@@ -1,0 +1,32 @@
+{
+  "pre_check": {
+    "Python环境": {
+      "status": "passed",
+      "message": "主流程Python: Python 3.13.12"
+    },
+    "RSS源健康": {
+      "status": "passed",
+      "message": "3/4个RSS源健康"
+    },
+    "推送渠道配置": {
+      "status": "passed",
+      "message": "已配置3个推送渠道: 钉钉, Server酱, SMTP邮件"
+    },
+    "API密钥有效": {
+      "status": "passed",
+      "message": "阿里云API密钥已配置"
+    },
+    "ffmpeg已安装": {
+      "status": "passed",
+      "message": "ffmpeg已安装"
+    },
+    "依赖包完整": {
+      "status": "passed",
+      "message": "所有依赖包已安装"
+    }
+  },
+  "post_check": {},
+  "summary": {
+    "pre_check_passed": true
+  }
+}
