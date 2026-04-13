@@ -11,7 +11,15 @@
     <itunes:category text="Technology"/>
     <itunes:explicit>false</itunes:explicit>
     
-        <item>
+    <item>
+        <title>AI科技早报 - 2026年04月14日</title>
+        <description>A：晓晓，你听说了吗？OpenAI又放大招了，直接发布了GPT-5，这不就是AI界的"升天"吗？ B：确实，GPT-5的性能提升挺明显的，尤其是在多模态处理和推理能力上。不过别太激动，它还是基于之前的架构优化的。 A：哦～原来不是啥革命性突破啊，那我是不是该去给GPT-4磕个头，感谢它打下的基础？ B：哈哈，虽然不是颠覆性的，但GPT-5在自然语言理解和生成方面确实更接近人类水平了。对于开发者来说，这是一个好消息。</description>
+        <pubDate>Tue, 14 Apr 2026 07:30:00 +0800</pubDate>
+        <enclosure url="https://liwei20170707-sudo.github.io/AI-News-Daily-Program/podcasts/AI科技早报_20260414.mp3" length="1918893" type="audio/mpeg"/>
+        <itunes:duration>2:00</itunes:duration>
+        <itunes:summary>A：晓晓，你听说了吗？OpenAI又放大招了，直接发布了GPT-5，这不就是AI界的"升天"吗？ B：确实，GPT-5的性能提升挺明显的，尤其是在多模态处理和推理能力上。不过别太激动，它还是基于之前的架构优化的。 A：哦～原来不是啥革命性突破啊，那我是不是该去给GPT-4磕个头，感谢它打下的基础？ B：哈哈，虽然不是颠覆性的，但GPT-5在自然语言理解和生成方面确实更接近人类水平了。对于开发者来说，这是一个好消息。</itunes:summary>
+    </item>
+    <item>
         <title>AI科技早报 - 2026年04月13日</title>
         <description>A：晓晓，你听说了吗？OpenAI又放大招了，直接发布了GPT-5！ B：是啊，确实挺让人惊讶的。不过GPT-5相比之前的版本，在推理能力和多任务处理上都有明显提升。 A：那是不是意味着它能更懂我了？比如我问它"今天天气怎么样"，它不会只回答"晴天"吧？ B：理论上是的。GPT-5在语言理解、上下文连贯性以及生成能力上都有显著进步，尤其在复杂任务和逻辑推理方面表现更好。</description>
         <pubDate>Mon, 13 Apr 2026 07:30:00 +0800</pubDate>
