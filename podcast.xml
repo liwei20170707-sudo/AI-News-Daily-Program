@@ -11,7 +11,15 @@
     <itunes:category text="Technology"/>
     <itunes:explicit>false</itunes:explicit>
     
-    <item>
+        <item>
+        <title>AI科技早报 - 2026年04月17日</title>
+        <description>A：晓晓，今天咱们来聊聊最近的科技新闻吧，感觉有点儿热闹啊。 B：是啊，云希，确实有不少值得关注的亮点。你先挑一个讲讲？ A：那我先说大疆的新相机，Pocket 4，2999元起，听起来挺有性价比的。 B：对，这款相机搭载了1英寸传感器，还有智能跟随技术，能帮助用户更高效地创作视频，降低内容制作门槛。 A：哦，这不就是给小白用户量身定做的嘛！以前拍视频还得请专业团队，现在自己就能搞定？ B：差不多</description>
+        <pubDate>Fri, 17 Apr 2026 07:30:00 +0800</pubDate>
+        <enclosure url="https://liwei20170707-sudo.github.io/AI-News-Daily-Program/podcasts/AI科技早报_20260417.mp3" length="3614253" type="audio/mpeg"/>
+        <itunes:duration>3:45</itunes:duration>
+        <itunes:summary>A：晓晓，今天咱们来聊聊最近的科技新闻吧，感觉有点儿热闹啊。 B：是啊，云希，确实有不少值得关注的亮点。你先挑一个讲讲？ A：那我先说大疆的新相机，Pocket 4，2999元起，听起来挺有性价比的。 B：对，这款相机搭载了1英寸传感器，还有智能跟随技术，能帮助用户更高效地创作视频，降低内容制作门槛。 A：哦，这不就是给小白用户量身定做的嘛！以前拍视频还得请专业团队，现在自己就能搞定？ B：差不多</itunes:summary>
+    </item>
+<item>
         <title>AI科技早报 - 2026年04月14日</title>
         <description>A：晓晓，你听说了吗？OpenAI又放大招了，直接发布了GPT-5，这不就是AI界的"升天"吗？ B：确实，GPT-5的性能提升挺明显的，尤其是在多模态处理和推理能力上。不过别太激动，它还是基于之前的架构优化的。 A：哦～原来不是啥革命性突破啊，那我是不是该去给GPT-4磕个头，感谢它打下的基础？ B：哈哈，虽然不是颠覆性的，但GPT-5在自然语言理解和生成方面确实更接近人类水平了。对于开发者来说，这是一个好消息。</description>
         <pubDate>Tue, 14 Apr 2026 07:30:00 +0800</pubDate>
