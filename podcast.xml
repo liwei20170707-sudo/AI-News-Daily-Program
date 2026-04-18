@@ -11,7 +11,15 @@
     <itunes:category text="Technology"/>
     <itunes:explicit>false</itunes:explicit>
     
-            <item>
+                <item>
+        <title>AI科技早报 - 2026年04月19日</title>
+        <description>A：晓晓，今天咱们来聊聊最近的科技新闻吧，感觉有点热闹啊。 B：是啊，有好多有意思的内容，比如蔚来汽车还在用隐藏式门把手，这事儿你听说了吗？ A：啥？不是说现在都流行实体门把手了吗？蔚来还坚持用这个，是不是有点“复古”？ B：其实是因为现行国标还没要求必须改，所以他们暂时没问题，不过以后可能得改了。 A：哦，原来是这样，看来车企也在等政策变化呢，挺有意思的。</description>
+        <pubDate>Sun, 19 Apr 2026 07:30:00 +0800</pubDate>
+        <enclosure url="https://liwei20170707-sudo.github.io/AI-News-Daily-Program/podcasts/AI科技早报_20260419.mp3" length="3315117" type="audio/mpeg"/>
+        <itunes:duration>3:27</itunes:duration>
+        <itunes:summary>A：晓晓，今天咱们来聊聊最近的科技新闻吧，感觉有点热闹啊。 B：是啊，有好多有意思的内容，比如蔚来汽车还在用隐藏式门把手，这事儿你听说了吗？ A：啥？不是说现在都流行实体门把手了吗？蔚来还坚持用这个，是不是有点“复古”？ B：其实是因为现行国标还没要求必须改，所以他们暂时没问题，不过以后可能得改了。 A：哦，原来是这样，看来车企也在等政策变化呢，挺有意思的。</itunes:summary>
+    </item>
+<item>
         <title>AI科技早报 - 2026年04月18日</title>
         <description>A：晓晓，最近科技圈又热闹起来了，我刚看到几个新闻，咱们聊聊呗？ B：好啊，你先说第一个，我听着呢。 A：2026年北京车展要开啦，规模全球第一，38万平方米，比鸟巢还大！这不光是车多，更是智能汽车技术的集中展示。 B：没错，这种大型车展往往能预示行业趋势，比如自动驾驶、车联网这些新技术都会在这里亮相。开发者可以重点关注新车型和系统，用户也能提前体验未来出行方式。 A：对，感觉像是一场科技嘉年华，</description>
         <pubDate>Sat, 18 Apr 2026 07:30:00 +0800</pubDate>
