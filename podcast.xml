@@ -11,7 +11,15 @@
     <itunes:category text="Technology"/>
     <itunes:explicit>false</itunes:explicit>
     
-        <item>
+            <item>
+        <title>AI科技早报 - 2026年04月18日</title>
+        <description>A：晓晓，最近科技圈又热闹起来了，我刚看到几个新闻，咱们聊聊呗？ B：好啊，你先说第一个，我听着呢。 A：2026年北京车展要开啦，规模全球第一，38万平方米，比鸟巢还大！这不光是车多，更是智能汽车技术的集中展示。 B：没错，这种大型车展往往能预示行业趋势，比如自动驾驶、车联网这些新技术都会在这里亮相。开发者可以重点关注新车型和系统，用户也能提前体验未来出行方式。 A：对，感觉像是一场科技嘉年华，</description>
+        <pubDate>Sat, 18 Apr 2026 07:30:00 +0800</pubDate>
+        <enclosure url="https://liwei20170707-sudo.github.io/AI-News-Daily-Program/podcasts/AI科技早报_20260418.mp3" length="2609709" type="audio/mpeg"/>
+        <itunes:duration>2:43</itunes:duration>
+        <itunes:summary>A：晓晓，最近科技圈又热闹起来了，我刚看到几个新闻，咱们聊聊呗？ B：好啊，你先说第一个，我听着呢。 A：2026年北京车展要开啦，规模全球第一，38万平方米，比鸟巢还大！这不光是车多，更是智能汽车技术的集中展示。 B：没错，这种大型车展往往能预示行业趋势，比如自动驾驶、车联网这些新技术都会在这里亮相。开发者可以重点关注新车型和系统，用户也能提前体验未来出行方式。 A：对，感觉像是一场科技嘉年华，</itunes:summary>
+    </item>
+<item>
         <title>AI科技早报 - 2026年04月17日</title>
         <description>A：晓晓，今天咱们来聊聊最近的科技新闻吧，感觉有点儿热闹啊。 B：是啊，云希，确实有不少值得关注的亮点。你先挑一个讲讲？ A：那我先说大疆的新相机，Pocket 4，2999元起，听起来挺有性价比的。 B：对，这款相机搭载了1英寸传感器，还有智能跟随技术，能帮助用户更高效地创作视频，降低内容制作门槛。 A：哦，这不就是给小白用户量身定做的嘛！以前拍视频还得请专业团队，现在自己就能搞定？ B：差不多</description>
         <pubDate>Fri, 17 Apr 2026 07:30:00 +0800</pubDate>
