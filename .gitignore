@@ -9,6 +9,7 @@ ENV/
 
 # 敏感配置
 dashscope_key.txt
+smtp_password.txt
 
 # 报告文件（可选）
 # reports/

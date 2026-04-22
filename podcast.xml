@@ -11,7 +11,15 @@
     <itunes:category text="Technology"/>
     <itunes:explicit>false</itunes:explicit>
     
-                <item>
+                    <item>
+        <title>AI科技早报 - 2026年04月23日</title>
+        <description>A：晓晓，今天咱们来聊聊最近的科技新闻吧，感觉有点“烧钱”啊。 B：是啊，听说哪吒造车三年烧了183亿，这数字听着都心疼。 A：哎哟，这不就是“烧钱”两字的最好诠释吗？不过你别说，现在车企真的挺拼的，连哪吒都敢上赛道了。 B：确实，但这也说明AI和智能汽车的发展越来越快，资金投入也越来越大。 A：对了，还有个消息，腾讯和阿里在谈投资DeepSeek，这是不是意味着AI大模型又火了？ B：没错，AI</description>
+        <pubDate>Thu, 23 Apr 2026 07:30:00 +0800</pubDate>
+        <enclosure url="https://liwei20170707-sudo.github.io/AI-News-Daily-Program/podcasts/AI科技早报_20260423.mp3" length="4216365" type="audio/mpeg"/>
+        <itunes:duration>4:23</itunes:duration>
+        <itunes:summary>A：晓晓，今天咱们来聊聊最近的科技新闻吧，感觉有点“烧钱”啊。 B：是啊，听说哪吒造车三年烧了183亿，这数字听着都心疼。 A：哎哟，这不就是“烧钱”两字的最好诠释吗？不过你别说，现在车企真的挺拼的，连哪吒都敢上赛道了。 B：确实，但这也说明AI和智能汽车的发展越来越快，资金投入也越来越大。 A：对了，还有个消息，腾讯和阿里在谈投资DeepSeek，这是不是意味着AI大模型又火了？ B：没错，AI</itunes:summary>
+    </item>
+<item>
         <title>AI科技早报 - 2026年04月19日</title>
         <description>A：晓晓，今天咱们来聊聊最近的科技新闻吧，感觉有点热闹啊。 B：是啊，有好多有意思的内容，比如蔚来汽车还在用隐藏式门把手，这事儿你听说了吗？ A：啥？不是说现在都流行实体门把手了吗？蔚来还坚持用这个，是不是有点“复古”？ B：其实是因为现行国标还没要求必须改，所以他们暂时没问题，不过以后可能得改了。 A：哦，原来是这样，看来车企也在等政策变化呢，挺有意思的。</description>
         <pubDate>Sun, 19 Apr 2026 07:30:00 +0800</pubDate>
