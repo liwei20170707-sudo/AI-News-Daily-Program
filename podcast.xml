@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+<channel>
+    <title>AI科技早报</title>
+    <link>https://liwei20170707-sudo.github.io/AI-News-Daily-Program</link>
+    <language>zh-CN</language>
+    <author>AI新闻编辑部</author>
+    <description>每日AI科技热点，双人对话播报</description>
+    <itunes:author>AI新闻编辑部</itunes:author>
+    <itunes:summary>每日AI科技热点，双人对话播报</itunes:summary>
+    <itunes:category text="Technology"/>
+    <itunes:explicit>false</itunes:explicit>
+    
+    <item>
+        <title>AI科技早报 - 2026年04月28日</title>
+        <description>每日AI科技新闻精选，双人对话播报</description>
+        <pubDate>Tue, 28 Apr 2026 00:14:57 +0800</pubDate>
+        <enclosure url="https://liwei20170707-sudo.github.io/AI-News-Daily-Program/podcasts/AI科技早报_20260428.mp3" length="3536685" type="audio/mpeg"/>
+        <itunes:duration>5:00</itunes:duration>
+    </item>
+</channel>
+</rss>
